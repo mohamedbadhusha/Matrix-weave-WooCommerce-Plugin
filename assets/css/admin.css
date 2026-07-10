@@ -1,0 +1,202 @@
+/* Matrixweave for WooCommerce — admin settings styles */
+
+.matrixweave-wrap {
+	max-width: 1100px;
+}
+
+.matrixweave-header {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	margin: 16px 0 8px;
+}
+
+.matrixweave-header .dashicons-format-chat {
+	font-size: 34px;
+	width: 34px;
+	height: 34px;
+	color: #6366f1;
+}
+
+.matrixweave-header h1 {
+	margin: 0;
+	padding: 0;
+	font-size: 22px;
+}
+
+.matrixweave-sub {
+	margin: 2px 0 0;
+	color: #64748b;
+}
+
+.matrixweave-status-row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin: 12px 0 18px;
+}
+
+.matrixweave-pill {
+	display: inline-flex;
+	align-items: center;
+	font-size: 12px;
+	font-weight: 600;
+	padding: 4px 12px;
+	border-radius: 999px;
+	border: 1px solid #d1d5db;
+	background: #f8fafc;
+	color: #475569;
+}
+
+.matrixweave-pill.is-on {
+	background: #ecfdf5;
+	border-color: #a7f3d0;
+	color: #047857;
+}
+
+.matrixweave-pill.is-off {
+	background: #fef2f2;
+	border-color: #fecaca;
+	color: #b91c1c;
+}
+
+.matrixweave-grid {
+	display: grid;
+	grid-template-columns: 1fr 340px;
+	gap: 20px;
+	align-items: start;
+}
+
+@media (max-width: 960px) {
+	.matrixweave-grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+.matrixweave-card {
+	background: #fff;
+	border: 1px solid #e2e8f0;
+	border-radius: 12px;
+	padding: 18px 22px;
+	margin-bottom: 20px;
+	box-shadow: 0 1px 2px rgba( 15, 23, 42, 0.04 );
+}
+
+.matrixweave-card h2 {
+	font-size: 15px;
+	margin: 4px 0 6px;
+	padding-top: 10px;
+}
+
+.matrixweave-card h2:first-child {
+	padding-top: 0;
+}
+
+.matrixweave-switch {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	max-width: 620px;
+	line-height: 1.5;
+}
+
+.matrixweave-switch input[type="checkbox"] {
+	margin-top: 2px;
+}
+
+.matrixweave-advanced {
+	margin: 14px 0 4px;
+	border-top: 1px solid #eef2f7;
+	padding-top: 10px;
+}
+
+.matrixweave-advanced summary {
+	cursor: pointer;
+	font-weight: 600;
+	color: #475569;
+}
+
+.matrixweave-toggle-secret {
+	vertical-align: middle;
+	padding: 0 6px !important;
+}
+
+.matrixweave-toggle-secret .dashicons {
+	margin-top: 4px;
+}
+
+.matrixweave-test-btn .dashicons {
+	margin-top: 3px;
+}
+
+.matrixweave-test-result {
+	margin-left: 10px;
+	font-weight: 600;
+}
+
+.matrixweave-test-result.is-ok {
+	color: #047857;
+}
+
+.matrixweave-test-result.is-error {
+	color: #b91c1c;
+}
+
+/* Connect-catalog card */
+.matrixweave-connect .button-primary {
+	margin-top: 6px;
+}
+
+.matrixweave-write-toggle {
+	margin: 10px 0 14px;
+	font-size: 13px;
+}
+
+.matrixweave-key-output {
+	margin-top: 16px;
+	border-top: 1px dashed #cbd5e1;
+	padding-top: 14px;
+}
+
+.matrixweave-key-warning {
+	color: #b45309;
+	font-weight: 600;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.matrixweave-field {
+	margin-bottom: 10px;
+}
+
+.matrixweave-field label {
+	display: block;
+	font-size: 12px;
+	font-weight: 600;
+	color: #475569;
+	margin-bottom: 3px;
+}
+
+.matrixweave-copy {
+	display: flex;
+	gap: 6px;
+	align-items: stretch;
+}
+
+.matrixweave-copy code {
+	flex: 1;
+	overflow-x: auto;
+	white-space: nowrap;
+	background: #f1f5f9;
+	border: 1px solid #e2e8f0;
+	border-radius: 6px;
+	padding: 6px 8px;
+	font-size: 12px;
+}
+
+.matrixweave-help ol {
+	margin: 6px 0 10px 18px;
+	color: #475569;
+	line-height: 1.6;
+}
