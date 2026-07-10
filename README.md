@@ -47,8 +47,14 @@ wp_footer (this plugin, server-side)
 
 ## Installation
 
-1. Zip this repository (or download a release) and install it via
-   **Plugins → Add New → Upload Plugin**, then activate.
+**Direct download:** grab the ready-made zip from
+[matrixweave.com/downloads/matrixweave-for-woocommerce.zip](https://www.matrixweave.com/downloads/matrixweave-for-woocommerce.zip)
+(also linked from the [Connect Your Store](https://www.matrixweave.com/docs/connect-store)
+and [Install the Widget](https://www.matrixweave.com/docs/install-widget) docs).
+
+To build the zip from source instead: `bash bin/build-zip.sh` → `dist/matrixweave-for-woocommerce.zip`.
+
+1. Install the zip via **Plugins → Add New → Upload Plugin**, then activate.
 2. Open the **Matrixweave** admin menu.
 3. Paste your **Public key** (`pk_...`) and **Secret key** (`sk_...`) from your
    Matrixweave dashboard (**Settings → Chat Widget**).
