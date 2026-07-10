@@ -85,12 +85,67 @@ define( 'MATRIXWEAVE_SECRET_KEY', 'sk_your_secret_key' );
 | Accent color / Greeting | Optional overrides for the dashboard values. |
 | API URL / Widget script URL | Advanced — for self-hosted deployments. |
 
+## Works without WooCommerce too (plain WordPress)
+
+The plugin runs fine on a WordPress site that has **no** WooCommerce — a
+services, trading, membership or booking business that just wants the AI agent
+on their site. WooCommerce only gates the store-specific features:
+
+| Feature | Plain WordPress | With WooCommerce |
+|---|---|---|
+| Chat widget auto-embed | ✅ | ✅ |
+| Signed-in member identity (greet by name, skip name prompt, personalized memory) | ✅ — signing uses the WordPress login | ✅ |
+| Leads, bookings, quotes, knowledge-base answers | ✅ (Matrixweave-side features) | ✅ |
+| Connection tester | ✅ | ✅ |
+| "Where's my order?" lookups | ❌ no orders exist | ✅ |
+| One-click WooCommerce API key generation | ❌ button disabled with a hint | ✅ |
+
+- **Admin access:** with WooCommerce active, the settings page is available to
+  shop managers (`manage_woocommerce`); without it, the capability falls back
+  to administrators (`manage_options`) — see `Matrixweave_Settings::capability()`.
+- **Catalog without a store:** connect a price list in Matrixweave via
+  **ERP Connections → Add Source → Data / Files** (CSV/Excel upload, Google
+  Sheet, or manual entry). No store platform needed.
+
 ## Requirements
 
 - WordPress 5.8+
 - PHP 7.4+
-- WooCommerce 5.0+ (required for order lookups and API-key generation; the
-  widget alone works without it)
+- WooCommerce 5.0+ — only for order lookups and one-click API-key generation
+  (see the matrix above; everything else works without it)
+
+## Releasing / publishing the zip
+
+The hosted download at `matrixweave.com/downloads/matrixweave-for-woocommerce.zip`
+is a **hand-committed static file** in the main `ai-commerce-agent` repo
+(`apps/dashboard/public/downloads/`) — there is no pipeline that syncs it.
+After any change here:
+
+1. Bump `Version:` in `matrixweave-for-woocommerce.php` **and** the
+   `MATRIXWEAVE_VERSION` constant **and** `Stable tag:` in `readme.txt`;
+   add a `CHANGELOG.md` + `readme.txt` changelog entry.
+2. `bash bin/build-zip.sh` → produces `dist/matrixweave-for-woocommerce.zip`
+   (gitignored; single top-level `matrixweave-for-woocommerce/` folder as
+   WordPress expects).
+3. Copy the zip to `ai-commerce-agent/apps/dashboard/public/downloads/` and
+   commit **there** — otherwise the docs keep serving the stale zip.
+4. Verify after deploy: download the zip from the live docs page and check the
+   version in `readme.txt` inside it.
+
+## Troubleshooting
+
+- **Matrixweave menu missing (plain WordPress):** fixed in v1.0.1 — update the
+  plugin. On older versions the menu required a WooCommerce-only capability.
+- **Widget loads twice:** you're also pasting the manual snippet somewhere
+  (theme/WPCode). Turn off **Embed the widget** in the plugin, or remove the
+  snippet.
+- **"Test order-lookup connection" fails:** re-copy the Secret key (starts
+  with `sk_`) from the dashboard (**Settings → Chat Widget**), check the API
+  URL under **Advanced**, and make sure your host allows outbound HTTPS
+  (`wp_remote_post`).
+- **Order lookups not personalizing:** the customer must be logged into
+  WordPress; guests intentionally get the normal widget. Cached signatures
+  refresh every 50 minutes and are purged on logout/profile change.
 
 ## Developer notes
 

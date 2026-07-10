@@ -19,6 +19,7 @@ mkdir -p "$STAGE/$SLUG" "$ROOT/dist"
   --exclude='./bin' \
   --exclude='./.gitignore' \
   --exclude='./README.md' \
+  --exclude='./CHANGELOG.md' \
   .) | (cd "$STAGE/$SLUG" && tar -xf -)
 
 rm -f "$ROOT/dist/$SLUG.zip"
