@@ -4,7 +4,7 @@ Tags: woocommerce, ai, chatbot, sales agent, customer support, live chat, order 
 Requires at least: 5.8
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -55,7 +55,13 @@ Yes. The plugin declares HPOS and checkout-blocks compatibility and only reads c
 = Can guests use the chat? =
 Yes. Guests get the normal AI agent. Order lookups only activate for logged-in customers whose identity can be verified.
 
+= Does it work without WooCommerce (plain WordPress)? =
+Yes. On a plain WordPress site — a services, trading or membership business — the widget embed and signed-in member identity (greet by name, personalized memory) work exactly the same; the plugin settings appear for administrators. Only the one-click API-key generation and order lookups need WooCommerce. Connect your catalog/price list in Matrixweave via CSV, Google Sheet or manual entry instead.
+
 == Changelog ==
+
+= 1.0.1 =
+* Fix: settings menu now appears on plain WordPress sites without WooCommerce (capability falls back to administrators).
 
 = 1.0.0 =
 * Initial release: widget auto-embed, server-side signed customer identity for order lookups, one-click WooCommerce REST API key generation, connection tester, HPOS compatibility.

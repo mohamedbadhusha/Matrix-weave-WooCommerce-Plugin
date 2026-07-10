@@ -128,6 +128,20 @@ class Matrixweave_Settings {
 	 * ------------------------------------------------------------------- */
 
 	/**
+	 * Capability required to manage the plugin.
+	 *
+	 * Shop managers get access when WooCommerce is active; on a plain
+	 * WordPress site (no WooCommerce — e.g. a services/trading business
+	 * using the widget only) `manage_woocommerce` doesn't exist, so fall
+	 * back to administrators.
+	 *
+	 * @return string
+	 */
+	public static function capability() {
+		return class_exists( 'WooCommerce' ) ? 'manage_woocommerce' : 'manage_options';
+	}
+
+	/**
 	 * Add the top-level admin menu.
 	 *
 	 * @return void
@@ -136,7 +150,7 @@ class Matrixweave_Settings {
 		add_menu_page(
 			__( 'Matrixweave', 'matrixweave-for-woocommerce' ),
 			__( 'Matrixweave', 'matrixweave-for-woocommerce' ),
-			'manage_woocommerce',
+			self::capability(),
 			self::PAGE_SLUG,
 			array( $this, 'render_page' ),
 			'dashicons-format-chat',
@@ -249,7 +263,7 @@ class Matrixweave_Settings {
 	 * @return void
 	 */
 	public function render_page() {
-		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+		if ( ! current_user_can( self::capability() ) ) {
 			return;
 		}
 		require MATRIXWEAVE_PATH . 'includes/views/settings-page.php';
