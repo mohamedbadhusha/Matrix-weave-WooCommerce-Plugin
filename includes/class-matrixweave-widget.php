@@ -82,6 +82,14 @@ class Matrixweave_Widget {
 		$identity = Matrixweave_Identity::for_current_user( $this->settings );
 		if ( is_array( $identity ) ) {
 			$config = array_merge( $config, $identity );
+
+			// Wishlist personalization: only meaningful alongside a verified
+			// identity (the API ignores it otherwise), so it lives inside this
+			// branch. Product names from the YITH Wishlist plugin, when active.
+			$wishlist = $this->wishlist_product_names( get_current_user_id() );
+			if ( ! empty( $wishlist ) ) {
+				$config['customerWishlist'] = $wishlist;
+			}
 		}
 
 		/**
@@ -111,5 +119,53 @@ class Matrixweave_Widget {
 })();
 </script>
 <?php
+	}
+
+	/**
+	 * Product names on the user's YITH wishlist (newest first, max 10).
+	 *
+	 * Reads the YITH WooCommerce Wishlist table directly — stable across the
+	 * free and premium versions — and resolves names via wc_get_product() so
+	 * deleted/hidden products drop out. Cached per user for 10 minutes.
+	 * Returns [] when YITH (or WooCommerce) is not installed.
+	 *
+	 * @param int $user_id User ID.
+	 * @return string[]
+	 */
+	private function wishlist_product_names( $user_id ) {
+		if ( ! $user_id || ! function_exists( 'wc_get_product' ) ) {
+			return array();
+		}
+		global $wpdb;
+		$table = $wpdb->prefix . 'yith_wcwl';
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery
+		if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) !== $table ) {
+			return array(); // YITH Wishlist not installed.
+		}
+
+		$cache_key = 'mw_wishlist_' . (int) $user_id;
+		$cached    = get_transient( $cache_key );
+		if ( is_array( $cached ) ) {
+			return $cached;
+		}
+
+		$ids = $wpdb->get_col(
+			$wpdb->prepare(
+				"SELECT prod_id FROM {$table} WHERE user_id = %d ORDER BY dateadded DESC LIMIT 10", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				$user_id
+			)
+		);
+		// phpcs:enable
+
+		$names = array();
+		foreach ( (array) $ids as $pid ) {
+			$product = wc_get_product( (int) $pid );
+			if ( $product && $product->get_name() ) {
+				$names[] = wp_strip_all_tags( $product->get_name() );
+			}
+		}
+
+		set_transient( $cache_key, $names, 10 * MINUTE_IN_SECONDS );
+		return $names;
 	}
 }

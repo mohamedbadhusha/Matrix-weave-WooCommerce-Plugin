@@ -3,7 +3,7 @@
  * Plugin Name:       Matrixweave for WooCommerce
  * Plugin URI:        https://www.matrixweave.com/docs/connect-store
  * Description:        Official Matrixweave AI Sales &amp; Support agent for WooCommerce. Auto-embeds the chat widget and securely signs logged-in customers so the AI can answer "where's my order?" — no theme code, no wp-config edits.
- * Version:           1.0.3
+ * Version:           1.1.0
  * Requires at least: 5.8
  * Requires PHP:      7.4
  * Author:            Matrixweave
@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // No direct access.
 }
 
-define( 'MATRIXWEAVE_VERSION', '1.0.3' );
+define( 'MATRIXWEAVE_VERSION', '1.1.0' );
 define( 'MATRIXWEAVE_FILE', __FILE__ );
 define( 'MATRIXWEAVE_PATH', plugin_dir_path( __FILE__ ) );
 define( 'MATRIXWEAVE_URL', plugin_dir_url( __FILE__ ) );

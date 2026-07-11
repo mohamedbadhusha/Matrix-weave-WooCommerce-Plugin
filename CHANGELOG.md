@@ -2,6 +2,18 @@
 
 All notable changes to **Matrixweave for WooCommerce**.
 
+## [1.1.0] — 2026-07-11
+
+### Added
+- **Wishlist-aware AI suggestions.** When the YITH WooCommerce Wishlist plugin
+  is installed, the plugin reads the signed-in customer's wishlist (newest 10,
+  direct table read — works with YITH free and premium; per-user 10-minute
+  transient cache) and folds the product names into `Matrixweave.init()` as
+  `customerWishlist`. The widget forwards it ONLY together with the signed
+  identity, and the API only honors it when the identity verifies — so the
+  agent can personalize ("I noticed X is on your wishlist — it's in stock")
+  without any spoofing surface. Sites without YITH are unaffected.
+
 ## [1.0.3] — 2026-07-11
 
 ### Fixed
