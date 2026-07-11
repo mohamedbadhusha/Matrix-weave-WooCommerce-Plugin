@@ -75,7 +75,11 @@ class Matrixweave_API {
 		}
 
 		$code = (int) wp_remote_retrieve_response_code( $response );
-		if ( 200 !== $code ) {
+		// Accept any 2xx. The API historically answered 201 (framework default
+		// for POST) while this check demanded exactly 200 — which silently
+		// rejected every SUCCESSFUL signing and broke order lookups for all
+		// installs ≤ 1.0.2.
+		if ( $code < 200 || $code >= 300 ) {
 			return null;
 		}
 
@@ -94,7 +98,7 @@ class Matrixweave_API {
 	/**
 	 * Validate the configured secret key by requesting a throwaway signature.
 	 *
-	 * A 200 with a signature proves the secret key is valid and active. Uses a
+	 * A 2xx with a signature proves the secret key is valid and active. Uses a
 	 * neutral email that never becomes a real customer lookup.
 	 *
 	 * @return array { success: bool, message: string }

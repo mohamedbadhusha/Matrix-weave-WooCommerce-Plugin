@@ -2,6 +2,18 @@
 
 All notable changes to **Matrixweave for WooCommerce**.
 
+## [1.0.3] — 2026-07-11
+
+### Fixed
+- **Signing succeeded but the plugin threw the result away.** The Matrixweave
+  API answers `201 Created` for `POST /widget/sign-identity` (framework
+  default), while `Matrixweave_API` demanded exactly `200` — so every install
+  ≤ 1.0.2 silently rejected VALID signatures: order lookups never activated
+  and "Test order-lookup connection" always reported *"Could not verify the
+  secret key"* even with a perfectly good key. The client now accepts any
+  2xx. (The API was also pinned to answer 200 going forward, so already-
+  installed older plugin versions start working too.)
+
 ## [1.0.2] — 2026-07-11
 
 ### Fixed

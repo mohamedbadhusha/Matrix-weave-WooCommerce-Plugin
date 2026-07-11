@@ -4,7 +4,7 @@ Tags: woocommerce, ai, chatbot, sales agent, customer support, live chat, order 
 Requires at least: 5.8
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -59,6 +59,9 @@ Yes. Guests get the normal AI agent. Order lookups only activate for logged-in c
 Yes. On a plain WordPress site — a services, trading or membership business — the widget embed and signed-in member identity (greet by name, personalized memory) work exactly the same; the plugin settings appear for administrators. Only the one-click API-key generation and order lookups need WooCommerce. Connect your catalog/price list in Matrixweave via CSV, Google Sheet or manual entry instead.
 
 == Changelog ==
+
+= 1.0.3 =
+* Fix: identity signing and the connection tester rejected SUCCESSFUL API responses — the API answers 201 for the signing call while the plugin demanded exactly 200, so order lookups never activated and "Test order-lookup connection" always failed even with a valid Secret key. Any 2xx is now accepted.
 
 = 1.0.2 =
 * Fix: "Test order-lookup connection" now tests the key currently typed in the field (not only the previously saved one) — paste and Test works before Save.
