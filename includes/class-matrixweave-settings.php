@@ -70,6 +70,9 @@ class Matrixweave_Settings {
 			'mode'          => 'auto',
 			'primary_color' => '',
 			'greeting'      => '',
+			// "Allow the agent to create orders (Read/Write)" toggle in the
+			// Connect-your-catalog box — remembered across saves/reloads.
+			'key_write'     => 'no',
 		);
 	}
 
@@ -121,6 +124,9 @@ class Matrixweave_Settings {
 	}
 	public function secret_is_from_constant() {
 		return defined( 'MATRIXWEAVE_SECRET_KEY' ) && MATRIXWEAVE_SECRET_KEY;
+	}
+	public function is_key_write_enabled() {
+		return 'yes' === $this->get( 'key_write', 'no' );
 	}
 
 	/* ---------------------------------------------------------------------
@@ -212,6 +218,15 @@ class Matrixweave_Settings {
 		$out['primary_color'] = isset( $input['primary_color'] ) ? sanitize_hex_color( $input['primary_color'] ) : '';
 		$out['greeting']      = isset( $input['greeting'] ) ? sanitize_text_field( $input['greeting'] ) : '';
 
+		// Read/Write key preference (mirrored from the Connect-your-catalog
+		// checkbox via a hidden field). Preserve the stored value when the
+		// field isn't submitted at all (stale cached admin page).
+		if ( isset( $input['key_write'] ) ) {
+			$out['key_write'] = ( 'yes' === $input['key_write'] ) ? 'yes' : 'no';
+		} else {
+			$out['key_write'] = ( isset( $existing['key_write'] ) && 'yes' === $existing['key_write'] ) ? 'yes' : 'no';
+		}
+
 		// If the credentials that affect signing changed, drop cached signatures.
 		$old_secret = isset( $existing['secret_key'] ) ? $existing['secret_key'] : '';
 		$old_api    = isset( $existing['api_url'] ) ? $existing['api_url'] : '';
@@ -243,11 +258,12 @@ class Matrixweave_Settings {
 				'generateAction' => Matrixweave_Connection::AJAX_GENERATE,
 				'testAction'   => Matrixweave_Connection::AJAX_TEST,
 				'i18n'         => array(
-					'generating' => __( 'Generating…', 'matrixweave-for-woocommerce' ),
-					'testing'    => __( 'Testing…', 'matrixweave-for-woocommerce' ),
-					'copied'     => __( 'Copied!', 'matrixweave-for-woocommerce' ),
-					'copy'       => __( 'Copy', 'matrixweave-for-woocommerce' ),
-					'error'      => __( 'Something went wrong. Please try again.', 'matrixweave-for-woocommerce' ),
+					'generating'   => __( 'Generating…', 'matrixweave-for-woocommerce' ),
+					'testing'      => __( 'Testing…', 'matrixweave-for-woocommerce' ),
+					'copied'       => __( 'Copied!', 'matrixweave-for-woocommerce' ),
+					'copy'         => __( 'Copy', 'matrixweave-for-woocommerce' ),
+					'error'        => __( 'Something went wrong. Please try again.', 'matrixweave-for-woocommerce' ),
+					'saveReminder' => __( 'Now click "Save changes" to store it.', 'matrixweave-for-woocommerce' ),
 				),
 			)
 		);

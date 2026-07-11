@@ -53,6 +53,13 @@ class Matrixweave_Connection {
 
 		$permissions = ( isset( $_POST['write'] ) && '1' === sanitize_text_field( wp_unslash( $_POST['write'] ) ) ) ? 'read_write' : 'read';
 
+		// Remember the Read/Write choice so the checkbox survives page
+		// reloads even if the owner never clicks Save changes.
+		$stored              = get_option( Matrixweave_Settings::OPTION_KEY, array() );
+		$stored              = is_array( $stored ) ? $stored : array();
+		$stored['key_write'] = ( 'read_write' === $permissions ) ? 'yes' : 'no';
+		update_option( Matrixweave_Settings::OPTION_KEY, $stored );
+
 		global $wpdb;
 		$consumer_key    = 'ck_' . wc_rand_hash();
 		$consumer_secret = 'cs_' . wc_rand_hash();
@@ -98,8 +105,18 @@ class Matrixweave_Connection {
 		$this->guard();
 
 		$settings = matrixweave()->settings;
-		$api      = new Matrixweave_API( $settings->get_api_url(), $settings->get_secret_key() );
-		$result   = $api->test_secret_key();
+
+		// Prefer the values currently TYPED on the settings page (posted by
+		// admin.js) over the saved ones, so "paste key → Test" works before
+		// the user clicks Save. Blank posted values fall back to saved.
+		$typed_secret = isset( $_POST['secret'] ) ? trim( sanitize_text_field( wp_unslash( $_POST['secret'] ) ) ) : '';
+		$typed_api    = isset( $_POST['api_url'] ) ? esc_url_raw( trim( wp_unslash( $_POST['api_url'] ) ) ) : '';
+
+		$secret  = ( '' !== $typed_secret && ! $settings->secret_is_from_constant() ) ? $typed_secret : $settings->get_secret_key();
+		$api_url = ( '' !== $typed_api ) ? untrailingslashit( $typed_api ) : $settings->get_api_url();
+
+		$api    = new Matrixweave_API( $api_url, $secret );
+		$result = $api->test_secret_key();
 
 		if ( ! empty( $result['success'] ) ) {
 			wp_send_json_success( array( 'message' => $result['message'] ) );

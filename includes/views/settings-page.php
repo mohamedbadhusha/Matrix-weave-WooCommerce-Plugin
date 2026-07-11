@@ -159,6 +159,9 @@ $wc_active        = class_exists( 'WooCommerce' );
 						</table>
 					</details>
 
+					<?php // Mirrors the Connect-your-catalog Read/Write checkbox (sidebar, outside this form) so Save persists it. Kept in sync by admin.js. ?>
+					<input type="hidden" id="mw-key-write-mirror" name="<?php echo esc_attr( Matrixweave_Settings::OPTION_KEY ); ?>[key_write]" value="<?php echo esc_attr( $settings->is_key_write_enabled() ? 'yes' : 'no' ); ?>" />
+
 					<p class="submit">
 						<?php submit_button( __( 'Save changes', 'matrixweave-for-woocommerce' ), 'primary', 'submit', false ); ?>
 						<button type="button" class="button button-secondary matrixweave-test-btn" id="mw-test-connection">
@@ -176,7 +179,7 @@ $wc_active        = class_exists( 'WooCommerce' );
 				<p class="description"><?php esc_html_e( 'Generate a read-only WooCommerce API key, then paste it into Matrixweave → ERP Connections → Add Source → WooCommerce. No digging through WooCommerce settings.', 'matrixweave-for-woocommerce' ); ?></p>
 
 				<label class="matrixweave-switch matrixweave-write-toggle">
-					<input type="checkbox" id="mw-key-write" value="1" />
+					<input type="checkbox" id="mw-key-write" value="1" <?php checked( $settings->is_key_write_enabled() ); ?> />
 					<span><?php esc_html_e( 'Allow the agent to create orders (Read/Write)', 'matrixweave-for-woocommerce' ); ?></span>
 				</label>
 

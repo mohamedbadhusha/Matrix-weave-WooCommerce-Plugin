@@ -43,17 +43,34 @@
 				.toggleClass( 'dashicons-hidden', type === 'text' );
 		} );
 
-		// Test the order-lookup (secret key) connection.
+		// Test the order-lookup (secret key) connection. Sends the CURRENT
+		// field values so a freshly pasted (not yet saved) key is what gets
+		// tested — previously this tested the stored key, so "paste → Test"
+		// failed until the user remembered to hit Save first.
 		$( '#mw-test-connection' ).on( 'click', function () {
 			var $btn = $( this );
 			var $out = $( '#mw-test-result' );
+			var data = {
+				secret: $.trim( $( '#mw_secret_key' ).val() || '' ),
+				api_url: $.trim( $( '#mw_api_url' ).val() || '' )
+			};
 			$btn.prop( 'disabled', true );
 			$out.removeClass( 'is-ok is-error' ).text( i18n.testing );
-			post( cfg.testAction, {}, function ( res ) {
+			post( cfg.testAction, data, function ( res ) {
 				$btn.prop( 'disabled', false );
 				var msg = ( res && res.data && res.data.message ) || i18n.error;
+				// A typed-but-unsaved key that verifies still needs Save.
+				if ( res && res.success && data.secret ) {
+					msg += ' ' + i18n.saveReminder;
+				}
 				$out.text( msg ).addClass( res && res.success ? 'is-ok' : 'is-error' );
 			} );
+		} );
+
+		// Keep the in-form hidden mirror in sync with the sidebar Read/Write
+		// checkbox so "Save changes" persists it across reloads.
+		$( '#mw-key-write' ).on( 'change', function () {
+			$( '#mw-key-write-mirror' ).val( $( this ).is( ':checked' ) ? 'yes' : 'no' );
 		} );
 
 		// Generate a WooCommerce REST API key.

@@ -26,6 +26,8 @@ class Matrixweave_Identity {
 
 	const CACHE_PREFIX = 'mw_identity_';
 	const CACHE_TTL    = 3000; // 50 minutes, comfortably inside the 1h signature window.
+	const FAIL_FLAG    = 'mw_identity_fail'; // set after a failed signing attempt
+	const FAIL_TTL     = 300;  // 5 minutes between retries when signing fails
 
 	/**
 	 * Get the signed identity payload for the current logged-in customer.
@@ -59,9 +61,16 @@ class Matrixweave_Identity {
 		$signed = self::get_cached( $user->ID, $email );
 
 		if ( null === $signed ) {
+			// Negative cache: when signing fails (bad key, API unreachable),
+			// don't retry on EVERY page load — a hanging remote call in
+			// wp_footer would slow the whole site for logged-in users.
+			if ( get_transient( self::FAIL_FLAG ) ) {
+				return null;
+			}
 			$api    = new Matrixweave_API( $settings->get_api_url(), $secret );
 			$signed = $api->sign_identity( $email );
 			if ( null === $signed ) {
+				set_transient( self::FAIL_FLAG, 1, self::FAIL_TTL );
 				return null;
 			}
 			self::set_cached( $user->ID, $email, $signed );
@@ -133,6 +142,8 @@ class Matrixweave_Identity {
 	 */
 	public static function purge_all_cached() {
 		global $wpdb;
+		// A changed key/URL must retry immediately — drop the failure flag.
+		delete_transient( self::FAIL_FLAG );
 		// Transients live in the options table with a _transient_ / _transient_timeout_ prefix.
 		$like = $wpdb->esc_like( '_transient_' . self::CACHE_PREFIX ) . '%';
 		$to   = $wpdb->esc_like( '_transient_timeout_' . self::CACHE_PREFIX ) . '%';

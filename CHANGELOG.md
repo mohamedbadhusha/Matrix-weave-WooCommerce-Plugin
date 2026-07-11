@@ -2,6 +2,28 @@
 
 All notable changes to **Matrixweave for WooCommerce**.
 
+## [1.0.2] — 2026-07-11
+
+### Fixed
+- **"Test order-lookup connection" now tests what you typed.** It used to test
+  only the previously *saved* secret key, so the natural "paste key → Test"
+  flow failed with *"Could not verify the secret key"* until the user
+  remembered to click Save changes first. The test now posts the current
+  Secret key + API URL field values (blank falls back to the saved ones), and
+  a successful test of an unsaved key reminds you to click Save.
+- **Read/Write checkbox persists.** "Allow the agent to create orders
+  (Read/Write)" in the Connect-your-catalog box reset on every save/reload
+  because it lives outside the settings form. It is now stored as a real
+  setting via a hidden in-form mirror (synced by admin.js) and is also
+  persisted immediately when you click Generate.
+
+### Performance
+- **Failed identity signing is negative-cached for 5 minutes.** With a wrong
+  secret key (or the API unreachable), every page load for a logged-in user
+  used to retry the server-side signing call in `wp_footer` — up to 8s of
+  added load time per view. Failures now set a short-lived flag; the flag is
+  cleared automatically when the key or API URL is changed and saved.
+
 ## [1.0.1] — 2026-07-10
 
 ### Fixed
