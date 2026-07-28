@@ -40,7 +40,7 @@ class Matrixweave_Widget {
 	 * @return void
 	 */
 	public function hooks() {
-		add_action( 'wp_footer', array( $this, 'render' ), 100 );
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue' ) );
 
 		// Forget a cached signature the moment it could go stale.
 		add_action( 'wp_logout', array( 'Matrixweave_Identity', 'purge_user' ) );
@@ -48,11 +48,14 @@ class Matrixweave_Widget {
 	}
 
 	/**
-	 * Output the widget loader + init in the footer.
+	 * Enqueue the widget loader + a small init script in the footer.
+	 *
+	 * Uses wp_enqueue_script()/wp_add_inline_script() so the loader is a
+	 * properly registered dependency rather than a hand-printed <script> tag.
 	 *
 	 * @return void
 	 */
-	public function render() {
+	public function enqueue() {
 		if ( ! $this->settings->is_embed_enabled() ) {
 			return;
 		}
@@ -99,26 +102,26 @@ class Matrixweave_Widget {
 		 */
 		$config = apply_filters( 'matrixweave_widget_config', $config );
 
-		$widget_url = $this->settings->get_widget_url();
-		$json       = wp_json_encode( $config );
+		$json = wp_json_encode( $config );
 		if ( false === $json ) {
 			return;
 		}
-		?>
-<!-- Matrixweave for WooCommerce v<?php echo esc_html( MATRIXWEAVE_VERSION ); ?> -->
-<script src="<?php echo esc_url( $widget_url ); ?>" async></script>
-<script>
-(function () {
-	function mwInit() {
-		if (typeof window.Matrixweave === 'undefined' || typeof window.Matrixweave.init !== 'function') {
-			return window.setTimeout(mwInit, 200);
-		}
-		window.Matrixweave.init(<?php echo $json; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- wp_json_encode output. ?>);
-	}
-	mwInit();
-})();
-</script>
-<?php
+
+		wp_enqueue_script(
+			'matrixweave-widget',
+			$this->settings->get_widget_url(),
+			array(),
+			MATRIXWEAVE_VERSION,
+			true
+		);
+
+		// Poll for the loader's global (it may not be ready yet), then hand it
+		// the server-built config. wp_json_encode output is safe JS.
+		$init = sprintf(
+			'(function(){function mwInit(){if(typeof window.Matrixweave==="undefined"||typeof window.Matrixweave.init!=="function"){return window.setTimeout(mwInit,200);}window.Matrixweave.init(%s);}mwInit();})();',
+			$json
+		);
+		wp_add_inline_script( 'matrixweave-widget', $init );
 	}
 
 	/**
@@ -137,8 +140,11 @@ class Matrixweave_Widget {
 			return array();
 		}
 		global $wpdb;
+		// $table is $wpdb->prefix concatenated with a fixed plugin string — no
+		// user input. Table/identifier names cannot be bound as $wpdb->prepare()
+		// parameters, so interpolation here is safe by construction.
 		$table = $wpdb->prefix . 'yith_wcwl';
-		// phpcs:disable WordPress.DB.DirectDatabaseQuery
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery, PluginCheck.Security.DirectDB.UnescapedDBParameter
 		if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) !== $table ) {
 			return array(); // YITH Wishlist not installed.
 		}

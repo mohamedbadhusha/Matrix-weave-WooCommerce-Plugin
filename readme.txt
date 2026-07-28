@@ -1,14 +1,14 @@
 === Matrixweave for WooCommerce ===
 Contributors: matrixweave
-Tags: woocommerce, ai, chatbot, sales agent, customer support, live chat, order tracking
+Tags: woocommerce, ai chatbot, sales agent, customer support, order tracking
 Requires at least: 5.8
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-The official Matrixweave AI Sales & Support agent for WooCommerce. Auto-embeds the chat and securely unlocks personalized order lookups — no theme code.
+Add the Matrixweave AI sales & support agent to WooCommerce — auto-embeds the chat and answers signed-in customers' order questions securely.
 
 == Description ==
 
@@ -59,6 +59,9 @@ Yes. Guests get the normal AI agent. Order lookups only activate for logged-in c
 Yes. On a plain WordPress site — a services, trading or membership business — the widget embed and signed-in member identity (greet by name, personalized memory) work exactly the same; the plugin settings appear for administrators. Only the one-click API-key generation and order lookups need WooCommerce. Connect your catalog/price list in Matrixweave via CSV, Google Sheet or manual entry instead.
 
 == Changelog ==
+
+= 1.1.1 =
+* WordPress.org readiness: the chat loader now enqueues the standard WordPress way, translations auto-load, and the code passes the official Plugin Check. Marked Tested up to 7.0 and tidied the readme. No change to behaviour.
 
 = 1.1.0 =
 * New: wishlist-aware AI suggestions. When the YITH WooCommerce Wishlist plugin is active, the signed-in customer's wishlist product names (max 10, cached 10 minutes) are passed to the AI alongside their verified identity — the agent can say "I noticed X is on your wishlist — it's in stock right now". No wishlist plugin, no change.

@@ -61,8 +61,8 @@ final class Matrixweave {
 	 * Constructor — sets everything up.
 	 */
 	private function __construct() {
-		load_plugin_textdomain( 'matrixweave-for-woocommerce', false, dirname( MATRIXWEAVE_BASENAME ) . '/languages' );
-
+		// Translations load automatically (WordPress 4.6+ just-in-time loader);
+		// no manual load_plugin_textdomain() needed for a wordpress.org plugin.
 		$this->settings   = new Matrixweave_Settings();
 		$this->connection = new Matrixweave_Connection();
 		$this->widget     = new Matrixweave_Widget( $this->settings );

@@ -51,6 +51,7 @@ class Matrixweave_Connection {
 			);
 		}
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce + capability verified in guard() at the top of this handler.
 		$permissions = ( isset( $_POST['write'] ) && '1' === sanitize_text_field( wp_unslash( $_POST['write'] ) ) ) ? 'read_write' : 'read';
 
 		// Remember the Read/Write choice so the checkbox survives page
@@ -109,8 +110,10 @@ class Matrixweave_Connection {
 		// Prefer the values currently TYPED on the settings page (posted by
 		// admin.js) over the saved ones, so "paste key → Test" works before
 		// the user clicks Save. Blank posted values fall back to saved.
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce + capability verified in guard() at the top of this handler.
 		$typed_secret = isset( $_POST['secret'] ) ? trim( sanitize_text_field( wp_unslash( $_POST['secret'] ) ) ) : '';
-		$typed_api    = isset( $_POST['api_url'] ) ? esc_url_raw( trim( wp_unslash( $_POST['api_url'] ) ) ) : '';
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in guard(); esc_url_raw() sanitizes the value.
+		$typed_api    = isset( $_POST['api_url'] ) ? esc_url_raw( wp_unslash( $_POST['api_url'] ) ) : '';
 
 		$secret  = ( '' !== $typed_secret && ! $settings->secret_is_from_constant() ) ? $typed_secret : $settings->get_secret_key();
 		$api_url = ( '' !== $typed_api ) ? untrailingslashit( $typed_api ) : $settings->get_api_url();

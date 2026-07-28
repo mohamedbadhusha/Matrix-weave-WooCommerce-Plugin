@@ -2,6 +2,20 @@
 
 All notable changes to **Matrixweave for WooCommerce**.
 
+## [1.1.1] — 2026-07-28
+
+### Changed
+- WordPress.org directory compliance — passes the official Plugin Check:
+  - Widget loader now enqueues via `wp_enqueue_script()` + `wp_add_inline_script()`
+    instead of a hand-printed `<script>` tag.
+  - Removed the discouraged manual `load_plugin_textdomain()` call (WordPress
+    auto-loads translations for directory-hosted plugins).
+  - Prefixed admin-view variables; annotated the nonce-verified-in-shared-guard
+    AJAX handlers and the safe direct-DB wishlist read.
+  - `readme.txt`: **Tested up to 7.0**, trimmed to 5 tags, shortened the short
+    description; added a `languages/*.pot` translation template.
+- No change to plugin behaviour, the widget, or the signed-identity order flow.
+
 ## [1.1.0] — 2026-07-11
 
 ### Added
