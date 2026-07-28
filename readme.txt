@@ -32,6 +32,21 @@ It solves the one thing that used to require editing `wp-config.php` and `functi
 
 The Secret key is stored on your server and, optionally, can be provided via a `MATRIXWEAVE_SECRET_KEY` constant in `wp-config.php` to keep it out of the database entirely.
 
+= Third-party service (Matrixweave) =
+
+This plugin is a connector to **Matrixweave**, a third-party AI service that powers the chat agent. The AI runs on Matrixweave's servers, so the plugin requires a Matrixweave account and sends data to Matrixweave to work:
+
+* The chat widget script is loaded from `https://www.matrixweave.com/widget.js` on pages where the chat is shown.
+* Messages that visitors type in the chat are sent to the Matrixweave API (`https://api.matrixweave.com`) to generate the AI's replies.
+* For a signed-in customer, the plugin sends that customer's email address to the Matrixweave API (server-to-server, keyed by your Secret key) to obtain a signed proof, so the AI can look up that customer's own orders.
+* If you connect your catalog, you generate a WooCommerce REST API key from the plugin and paste it into Matrixweave; Matrixweave then reads your products and orders through the standard WooCommerce REST API to answer product and order questions.
+
+By installing the plugin and entering your keys you consent to this. Please review Matrixweave's terms and privacy policy:
+
+* Service: [https://www.matrixweave.com](https://www.matrixweave.com)
+* Terms of Service: [https://www.matrixweave.com/terms](https://www.matrixweave.com/terms)
+* Privacy Policy: [https://www.matrixweave.com/privacy](https://www.matrixweave.com/privacy)
+
 == Installation ==
 
 1. Upload the plugin to `/wp-content/plugins/` (or install the ZIP via **Plugins → Add New → Upload**).
@@ -61,7 +76,7 @@ Yes. On a plain WordPress site — a services, trading or membership business �
 == Changelog ==
 
 = 1.1.1 =
-* WordPress.org readiness: the chat loader now enqueues the standard WordPress way, translations auto-load, and the code passes the official Plugin Check. Marked Tested up to 7.0 and tidied the readme. No change to behaviour.
+* WordPress.org readiness: the chat loader now enqueues the standard WordPress way, translations auto-load, and the code passes the official Plugin Check. Added a third-party service (Matrixweave) disclosure with Terms/Privacy links. Marked Tested up to 7.0 and tidied the readme. No change to behaviour.
 
 = 1.1.0 =
 * New: wishlist-aware AI suggestions. When the YITH WooCommerce Wishlist plugin is active, the signed-in customer's wishlist product names (max 10, cached 10 minutes) are passed to the AI alongside their verified identity — the agent can say "I noticed X is on your wishlist — it's in stock right now". No wishlist plugin, no change.
