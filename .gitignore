@@ -8,6 +8,8 @@ Thumbs.db
 # Build / dist
 node_modules/
 *.zip
+# Build output — the release zip and any staging copies of the plugin.
+dist/
 
 # Logs
 *.log

@@ -35,7 +35,7 @@
 
 		// Show / hide the secret key field.
 		$( '.matrixweave-toggle-secret' ).on( 'click', function () {
-			var $input = $( '#mw_secret_key' );
+			var $input = $( '#matrixweave_secret_key_field' );
 			var type = $input.attr( 'type' ) === 'password' ? 'text' : 'password';
 			$input.attr( 'type', type );
 			$( this ).find( '.dashicons' )
@@ -47,12 +47,12 @@
 		// field values so a freshly pasted (not yet saved) key is what gets
 		// tested — previously this tested the stored key, so "paste → Test"
 		// failed until the user remembered to hit Save first.
-		$( '#mw-test-connection' ).on( 'click', function () {
+		$( '#matrixweave-test-connection' ).on( 'click', function () {
 			var $btn = $( this );
-			var $out = $( '#mw-test-result' );
+			var $out = $( '#matrixweave-test-result' );
 			var data = {
-				secret: $.trim( $( '#mw_secret_key' ).val() || '' ),
-				api_url: $.trim( $( '#mw_api_url' ).val() || '' )
+				secret: $.trim( $( '#matrixweave_secret_key_field' ).val() || '' ),
+				api_url: $.trim( $( '#matrixweave_api_url_field' ).val() || '' )
 			};
 			$btn.prop( 'disabled', true );
 			$out.removeClass( 'is-ok is-error' ).text( i18n.testing );
@@ -69,14 +69,14 @@
 
 		// Keep the in-form hidden mirror in sync with the sidebar Read/Write
 		// checkbox so "Save changes" persists it across reloads.
-		$( '#mw-key-write' ).on( 'change', function () {
-			$( '#mw-key-write-mirror' ).val( $( this ).is( ':checked' ) ? 'yes' : 'no' );
+		$( '#matrixweave-key-write' ).on( 'change', function () {
+			$( '#matrixweave-key-write-mirror' ).val( $( this ).is( ':checked' ) ? 'yes' : 'no' );
 		} );
 
 		// Generate a WooCommerce REST API key.
-		$( '#mw-generate-key' ).on( 'click', function () {
+		$( '#matrixweave-generate-key' ).on( 'click', function () {
 			var $btn = $( this );
-			var write = $( '#mw-key-write' ).is( ':checked' ) ? '1' : '0';
+			var write = $( '#matrixweave-key-write' ).is( ':checked' ) ? '1' : '0';
 			var original = $btn.text();
 			$btn.prop( 'disabled', true ).text( i18n.generating );
 			post( cfg.generateAction, { write: write }, function ( res ) {
@@ -86,7 +86,7 @@
 					return;
 				}
 				var d = res.data;
-				var $out = $( '#mw-key-output' );
+				var $out = $( '#matrixweave-key-output' );
 				$out.find( '[data-field="siteUrl"]' ).text( d.siteUrl || '' );
 				$out.find( '[data-field="consumerKey"]' ).text( d.consumerKey || '' );
 				$out.find( '[data-field="consumerSecret"]' ).text( d.consumerSecret || '' );

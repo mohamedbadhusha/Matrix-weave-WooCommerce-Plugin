@@ -2,6 +2,73 @@
 
 All notable changes to **Matrixweave for WooCommerce**.
 
+## [1.1.4] — 2026-08-13
+
+### Changed
+- **Renamed again, to `AI Chatbot, Live Chat & Sales Agent – Matrixweave`.**
+  1.1.3 put the keywords first but kept "for WooCommerce", which reads as a
+  requirement — yet the widget and signed-in identity work on any WordPress
+  site; only order lookups and REST-key generation need WooCommerce. Naming a
+  platform also narrows reach: "live chat" and "ai chatbot" are far higher
+  volume than anything containing "woocommerce". This matches how Tidio and
+  Crisp name their listings.
+  - "WordPress" cannot appear in a plugin name (Foundation trademark policy;
+    reviewers ask for its removal), so the alternative of naming both platforms
+    would have had to use "WP".
+  - The slug stays `matrixweave-for-woocommerce` — permanent — and the
+    `woocommerce` tag remains, so store-owner searches still match.
+- Rewrote the description opening: it now states plainly what works on any
+  WordPress site and what is WooCommerce-only, instead of burying that in an
+  FAQ near the bottom of the page.
+- Tags: dropped `order tracking` (narrow, already implied) for `live chat`.
+- Ships the mascot icon, which the 1.1.3 asset commits could not surface —
+  WP.org pinned the page to `?rev=` of the first assets commit, and only a
+  release appears to force a re-scan.
+- No code changes.
+
+## [1.1.3] — 2026-08-13
+
+### Changed
+- **Renamed the directory listing** to `AI Chatbot & Sales Agent for WooCommerce
+  – Matrixweave`. The old title carried no search terms merchants actually type
+  ("ai chatbot", "chatbot woocommerce", "ai agent"), and with no brand
+  recognition yet that cost essentially all directory search traffic. Changed
+  now, at fewer than 10 installs, when it is free to do.
+  - Only the **display name** changed — `Plugin Name:` in the header and the
+    `=== … ===` line in `readme.txt`.
+  - The slug, install folder, text domain, option name, constants, classes and
+    admin menu label are all untouched, so this is not a breaking change and
+    needs no migration.
+- Published the directory screenshots captured on a clean WordPress 7.0.4 +
+  WooCommerce install; the `== Screenshots ==` captions added in 1.1.2 become
+  visible with this release, since the directory reads the readme from the
+  stable tag.
+
+## [1.1.2] — 2026-08-12
+
+### Changed
+- Plugin review follow-up: all stored data now uses the plugin's full, distinct
+  prefix so it cannot collide with another plugin or theme.
+  - Transients renamed `mw_identity_*` → `matrixweave_identity_*`,
+    `mw_identity_fail` → `matrixweave_identity_fail`, and
+    `mw_wishlist_*` → `matrixweave_wishlist_*` (the wishlist prefix is now the
+    `Matrixweave_Widget::WISHLIST_CACHE_PREFIX` constant).
+  - `uninstall.php` cleans up both transient families using
+    `$wpdb->prepare()` + `esc_like()` instead of a hand-escaped `LIKE`.
+  - Admin field IDs (`mw_secret_key`, `mw-generate-key`, …) and the inline
+    widget bootstrap function renamed to the `matrixweave` prefix.
+- The stored option (`matrixweave_settings`), all constants, classes, hooks and
+  the AJAX actions were already fully prefixed and are unchanged — no migration
+  is needed. The old transients are short-lived caches (5–50 min) and simply
+  expire.
+- `readme.txt`: the third-party service notice now enumerates **all** customer
+  data sent to Matrixweave. It previously named only the email address, while
+  the widget also passes the signed-in customer's display name (`customerName`)
+  and, with YITH Wishlist active, their wishlist product names
+  (`customerWishlist`). Wishlist-aware replies are now listed as a feature in
+  the description too, instead of only in the 1.1.0 changelog entry.
+- Refreshed the `languages/*.pot` version stamp.
+
 ## [1.1.1] — 2026-07-28
 
 ### Changed

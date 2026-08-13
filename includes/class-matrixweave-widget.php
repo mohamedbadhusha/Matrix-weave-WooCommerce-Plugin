@@ -19,6 +19,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Matrixweave_Widget {
 
 	/**
+	 * Transient prefix for the per-user cached wishlist product names.
+	 */
+	const WISHLIST_CACHE_PREFIX = 'matrixweave_wishlist_';
+
+	/**
 	 * Settings instance.
 	 *
 	 * @var Matrixweave_Settings
@@ -118,7 +123,7 @@ class Matrixweave_Widget {
 		// Poll for the loader's global (it may not be ready yet), then hand it
 		// the server-built config. wp_json_encode output is safe JS.
 		$init = sprintf(
-			'(function(){function mwInit(){if(typeof window.Matrixweave==="undefined"||typeof window.Matrixweave.init!=="function"){return window.setTimeout(mwInit,200);}window.Matrixweave.init(%s);}mwInit();})();',
+			'(function(){function matrixweaveInit(){if(typeof window.Matrixweave==="undefined"||typeof window.Matrixweave.init!=="function"){return window.setTimeout(matrixweaveInit,200);}window.Matrixweave.init(%s);}matrixweaveInit();})();',
 			$json
 		);
 		wp_add_inline_script( 'matrixweave-widget', $init );
@@ -149,7 +154,7 @@ class Matrixweave_Widget {
 			return array(); // YITH Wishlist not installed.
 		}
 
-		$cache_key = 'mw_wishlist_' . (int) $user_id;
+		$cache_key = self::WISHLIST_CACHE_PREFIX . (int) $user_id;
 		$cached    = get_transient( $cache_key );
 		if ( is_array( $cached ) ) {
 			return $cached;

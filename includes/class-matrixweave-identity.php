@@ -24,9 +24,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Matrixweave_Identity {
 
-	const CACHE_PREFIX = 'mw_identity_';
+	const CACHE_PREFIX = 'matrixweave_identity_';
 	const CACHE_TTL    = 3000; // 50 minutes, comfortably inside the 1h signature window.
-	const FAIL_FLAG    = 'mw_identity_fail'; // set after a failed signing attempt
+	const FAIL_FLAG    = 'matrixweave_identity_fail'; // set after a failed signing attempt
 	const FAIL_TTL     = 300;  // 5 minutes between retries when signing fails
 
 	/**

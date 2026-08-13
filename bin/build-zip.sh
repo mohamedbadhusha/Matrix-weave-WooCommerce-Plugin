@@ -17,6 +17,8 @@ mkdir -p "$STAGE/$SLUG" "$ROOT/dist"
   --exclude='./.github' \
   --exclude='./dist' \
   --exclude='./bin' \
+  --exclude='./wporg-assets' \
+  --exclude='./docker' \
   --exclude='./.gitignore' \
   --exclude='./README.md' \
   --exclude='./CHANGELOG.md' \

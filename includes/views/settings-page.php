@@ -61,10 +61,10 @@ $matrixweave_wc_active        = class_exists( 'WooCommerce' );
 					<table class="form-table" role="presentation">
 						<tr>
 							<th scope="row">
-								<label for="mw_public_key"><?php esc_html_e( 'Public key', 'matrixweave-for-woocommerce' ); ?></label>
+								<label for="matrixweave_public_key_field"><?php esc_html_e( 'Public key', 'matrixweave-for-woocommerce' ); ?></label>
 							</th>
 							<td>
-								<input type="text" id="mw_public_key" class="regular-text code"
+								<input type="text" id="matrixweave_public_key_field" class="regular-text code"
 									name="<?php echo esc_attr( Matrixweave_Settings::OPTION_KEY ); ?>[public_key]"
 									value="<?php echo esc_attr( $matrixweave_public_key ); ?>"
 									placeholder="pk_..." autocomplete="off" />
@@ -73,13 +73,13 @@ $matrixweave_wc_active        = class_exists( 'WooCommerce' );
 						</tr>
 						<tr>
 							<th scope="row">
-								<label for="mw_secret_key"><?php esc_html_e( 'Secret key', 'matrixweave-for-woocommerce' ); ?></label>
+								<label for="matrixweave_secret_key_field"><?php esc_html_e( 'Secret key', 'matrixweave-for-woocommerce' ); ?></label>
 							</th>
 							<td>
 								<?php if ( $matrixweave_secret_locked ) : ?>
 									<p><code>MATRIXWEAVE_SECRET_KEY</code> <?php esc_html_e( 'is defined in wp-config.php — using that. This field is disabled.', 'matrixweave-for-woocommerce' ); ?></p>
 								<?php else : ?>
-									<input type="password" id="mw_secret_key" class="regular-text code"
+									<input type="password" id="matrixweave_secret_key_field" class="regular-text code"
 										name="<?php echo esc_attr( Matrixweave_Settings::OPTION_KEY ); ?>[secret_key]"
 										value="" autocomplete="new-password"
 										placeholder="<?php echo $matrixweave_has_secret ? esc_attr__( '•••••••• saved — leave blank to keep', 'matrixweave-for-woocommerce' ) : 'sk_...'; ?>" />
@@ -117,9 +117,9 @@ $matrixweave_wc_active        = class_exists( 'WooCommerce' );
 							</td>
 						</tr>
 						<tr>
-							<th scope="row"><label for="mw_mode"><?php esc_html_e( 'Agent mode', 'matrixweave-for-woocommerce' ); ?></label></th>
+							<th scope="row"><label for="matrixweave_mode_field"><?php esc_html_e( 'Agent mode', 'matrixweave-for-woocommerce' ); ?></label></th>
 							<td>
-								<select id="mw_mode" name="<?php echo esc_attr( Matrixweave_Settings::OPTION_KEY ); ?>[mode]">
+								<select id="matrixweave_mode_field" name="<?php echo esc_attr( Matrixweave_Settings::OPTION_KEY ); ?>[mode]">
 									<option value="auto" <?php selected( $matrixweave_settings->get_mode(), 'auto' ); ?>><?php esc_html_e( 'Auto (Sales + Support)', 'matrixweave-for-woocommerce' ); ?></option>
 									<option value="sales_agent" <?php selected( $matrixweave_settings->get_mode(), 'sales_agent' ); ?>><?php esc_html_e( 'Sales', 'matrixweave-for-woocommerce' ); ?></option>
 									<option value="support_agent" <?php selected( $matrixweave_settings->get_mode(), 'support_agent' ); ?>><?php esc_html_e( 'Support', 'matrixweave-for-woocommerce' ); ?></option>
@@ -127,18 +127,18 @@ $matrixweave_wc_active        = class_exists( 'WooCommerce' );
 							</td>
 						</tr>
 						<tr>
-							<th scope="row"><label for="mw_primary_color"><?php esc_html_e( 'Accent color', 'matrixweave-for-woocommerce' ); ?></label></th>
+							<th scope="row"><label for="matrixweave_primary_color_field"><?php esc_html_e( 'Accent color', 'matrixweave-for-woocommerce' ); ?></label></th>
 							<td>
-								<input type="text" id="mw_primary_color" class="regular-text"
+								<input type="text" id="matrixweave_primary_color_field" class="regular-text"
 									name="<?php echo esc_attr( Matrixweave_Settings::OPTION_KEY ); ?>[primary_color]"
 									value="<?php echo esc_attr( $matrixweave_settings->get_primary_color() ); ?>" placeholder="#6366f1" />
 								<p class="description"><?php esc_html_e( 'Optional — overrides the color set in your dashboard. Leave blank to use the dashboard value.', 'matrixweave-for-woocommerce' ); ?></p>
 							</td>
 						</tr>
 						<tr>
-							<th scope="row"><label for="mw_greeting"><?php esc_html_e( 'Greeting', 'matrixweave-for-woocommerce' ); ?></label></th>
+							<th scope="row"><label for="matrixweave_greeting_field"><?php esc_html_e( 'Greeting', 'matrixweave-for-woocommerce' ); ?></label></th>
 							<td>
-								<input type="text" id="mw_greeting" class="large-text"
+								<input type="text" id="matrixweave_greeting_field" class="large-text"
 									name="<?php echo esc_attr( Matrixweave_Settings::OPTION_KEY ); ?>[greeting]"
 									value="<?php echo esc_attr( $matrixweave_settings->get_greeting() ); ?>" placeholder="<?php esc_attr_e( 'Hi! How can I help?', 'matrixweave-for-woocommerce' ); ?>" />
 							</td>
@@ -149,25 +149,25 @@ $matrixweave_wc_active        = class_exists( 'WooCommerce' );
 						<summary><?php esc_html_e( 'Advanced (API endpoints)', 'matrixweave-for-woocommerce' ); ?></summary>
 						<table class="form-table" role="presentation">
 							<tr>
-								<th scope="row"><label for="mw_api_url"><?php esc_html_e( 'API URL', 'matrixweave-for-woocommerce' ); ?></label></th>
-								<td><input type="url" id="mw_api_url" class="regular-text code" name="<?php echo esc_attr( Matrixweave_Settings::OPTION_KEY ); ?>[api_url]" value="<?php echo esc_attr( $matrixweave_settings->get_api_url() ); ?>" /></td>
+								<th scope="row"><label for="matrixweave_api_url_field"><?php esc_html_e( 'API URL', 'matrixweave-for-woocommerce' ); ?></label></th>
+								<td><input type="url" id="matrixweave_api_url_field" class="regular-text code" name="<?php echo esc_attr( Matrixweave_Settings::OPTION_KEY ); ?>[api_url]" value="<?php echo esc_attr( $matrixweave_settings->get_api_url() ); ?>" /></td>
 							</tr>
 							<tr>
-								<th scope="row"><label for="mw_widget_url"><?php esc_html_e( 'Widget script URL', 'matrixweave-for-woocommerce' ); ?></label></th>
-								<td><input type="url" id="mw_widget_url" class="regular-text code" name="<?php echo esc_attr( Matrixweave_Settings::OPTION_KEY ); ?>[widget_url]" value="<?php echo esc_attr( $matrixweave_settings->get_widget_url() ); ?>" /></td>
+								<th scope="row"><label for="matrixweave_widget_url_field"><?php esc_html_e( 'Widget script URL', 'matrixweave-for-woocommerce' ); ?></label></th>
+								<td><input type="url" id="matrixweave_widget_url_field" class="regular-text code" name="<?php echo esc_attr( Matrixweave_Settings::OPTION_KEY ); ?>[widget_url]" value="<?php echo esc_attr( $matrixweave_settings->get_widget_url() ); ?>" /></td>
 							</tr>
 						</table>
 					</details>
 
 					<?php // Mirrors the Connect-your-catalog Read/Write checkbox (sidebar, outside this form) so Save persists it. Kept in sync by admin.js. ?>
-					<input type="hidden" id="mw-key-write-mirror" name="<?php echo esc_attr( Matrixweave_Settings::OPTION_KEY ); ?>[key_write]" value="<?php echo esc_attr( $matrixweave_settings->is_key_write_enabled() ? 'yes' : 'no' ); ?>" />
+					<input type="hidden" id="matrixweave-key-write-mirror" name="<?php echo esc_attr( Matrixweave_Settings::OPTION_KEY ); ?>[key_write]" value="<?php echo esc_attr( $matrixweave_settings->is_key_write_enabled() ? 'yes' : 'no' ); ?>" />
 
 					<p class="submit">
 						<?php submit_button( __( 'Save changes', 'matrixweave-for-woocommerce' ), 'primary', 'submit', false ); ?>
-						<button type="button" class="button button-secondary matrixweave-test-btn" id="mw-test-connection">
+						<button type="button" class="button button-secondary matrixweave-test-btn" id="matrixweave-test-connection">
 							<span class="dashicons dashicons-update"></span> <?php esc_html_e( 'Test order-lookup connection', 'matrixweave-for-woocommerce' ); ?>
 						</button>
-						<span class="matrixweave-test-result" id="mw-test-result" aria-live="polite"></span>
+						<span class="matrixweave-test-result" id="matrixweave-test-result" aria-live="polite"></span>
 					</p>
 				</div>
 			</form>
@@ -179,18 +179,18 @@ $matrixweave_wc_active        = class_exists( 'WooCommerce' );
 				<p class="description"><?php esc_html_e( 'Generate a read-only WooCommerce API key, then paste it into Matrixweave → ERP Connections → Add Source → WooCommerce. No digging through WooCommerce settings.', 'matrixweave-for-woocommerce' ); ?></p>
 
 				<label class="matrixweave-switch matrixweave-write-toggle">
-					<input type="checkbox" id="mw-key-write" value="1" <?php checked( $matrixweave_settings->is_key_write_enabled() ); ?> />
+					<input type="checkbox" id="matrixweave-key-write" value="1" <?php checked( $matrixweave_settings->is_key_write_enabled() ); ?> />
 					<span><?php esc_html_e( 'Allow the agent to create orders (Read/Write)', 'matrixweave-for-woocommerce' ); ?></span>
 				</label>
 
-				<button type="button" class="button button-primary" id="mw-generate-key" <?php disabled( ! $matrixweave_wc_active ); ?>>
+				<button type="button" class="button button-primary" id="matrixweave-generate-key" <?php disabled( ! $matrixweave_wc_active ); ?>>
 					<?php esc_html_e( 'Generate WooCommerce API key', 'matrixweave-for-woocommerce' ); ?>
 				</button>
 				<?php if ( ! $matrixweave_wc_active ) : ?>
 					<p class="description"><?php esc_html_e( 'Activate WooCommerce to generate a key.', 'matrixweave-for-woocommerce' ); ?></p>
 				<?php endif; ?>
 
-				<div class="matrixweave-key-output" id="mw-key-output" hidden>
+				<div class="matrixweave-key-output" id="matrixweave-key-output" hidden>
 					<p class="matrixweave-key-warning"><span class="dashicons dashicons-warning"></span> <?php esc_html_e( 'Copy the secret now — it is shown only once.', 'matrixweave-for-woocommerce' ); ?></p>
 					<div class="matrixweave-field"><label><?php esc_html_e( 'Site URL', 'matrixweave-for-woocommerce' ); ?></label><div class="matrixweave-copy"><code data-field="siteUrl"></code><button type="button" class="button matrixweave-copy-btn"><?php esc_html_e( 'Copy', 'matrixweave-for-woocommerce' ); ?></button></div></div>
 					<div class="matrixweave-field"><label><?php esc_html_e( 'Consumer Key', 'matrixweave-for-woocommerce' ); ?></label><div class="matrixweave-copy"><code data-field="consumerKey"></code><button type="button" class="button matrixweave-copy-btn"><?php esc_html_e( 'Copy', 'matrixweave-for-woocommerce' ); ?></button></div></div>
