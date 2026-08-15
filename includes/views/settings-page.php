@@ -108,14 +108,22 @@ if ( $matrixweave_connected ) {
 			<?php endif; ?>
 
 			<?php
-			// Four honest outcomes, from the live probe — never a bare "connected".
-			if ( is_array( $matrixweave_status ) ) :
+			// Honest outcomes only, from the live probe — never a bare
+			// "connected", and never silence.
+			if ( ! is_array( $matrixweave_status ) ) :
+				?>
+				<p class="description">
+					<?php esc_html_e( 'Couldn’t check your catalog status just now — reload to try again. This doesn’t affect the chat widget.', 'matrixweave-for-woocommerce' ); ?>
+				</p>
+				<?php
+			else :
 				$matrixweave_products = isset( $matrixweave_status['productCount'] ) ? (int) $matrixweave_status['productCount'] : 0;
-				$matrixweave_readable = ! empty( $matrixweave_status['ordersReadable'] );
+				// null means the probe timed out — not that the store refused.
+				$matrixweave_readable = array_key_exists( 'ordersReadable', $matrixweave_status ) ? $matrixweave_status['ordersReadable'] : null;
 				?>
 				<?php if ( empty( $matrixweave_status['connected'] ) ) : ?>
 					<p class="matrixweave-pill is-off"><?php esc_html_e( 'Catalog not connected', 'matrixweave-for-woocommerce' ); ?></p>
-				<?php elseif ( ! $matrixweave_readable ) : ?>
+				<?php elseif ( false === $matrixweave_readable ) : ?>
 					<p class="matrixweave-pill is-off"><?php esc_html_e( 'Connected, but your store isn’t answering — order lookups will fail.', 'matrixweave-for-woocommerce' ); ?></p>
 					<?php if ( ! empty( $matrixweave_status['syncError'] ) ) : ?>
 						<p class="description"><?php echo esc_html( $matrixweave_status['syncError'] ); ?></p>
@@ -128,9 +136,18 @@ if ( $matrixweave_connected ) {
 						echo esc_html(
 							sprintf(
 								/* translators: %d: number of products synced. */
-								_n( '%d product synced, and order lookups are working.', '%d products synced, and order lookups are working.', $matrixweave_products, 'matrixweave-for-woocommerce' ),
+								_n( '%d product synced.', '%d products synced.', $matrixweave_products, 'matrixweave-for-woocommerce' ),
 								$matrixweave_products
 							)
+						);
+						?>
+					</p>
+					<p class="description">
+						<?php
+						echo esc_html(
+							null === $matrixweave_readable
+								? __( 'Your store was slow to answer our order check, so that part is unconfirmed. Reload to try again.', 'matrixweave-for-woocommerce' )
+								: __( 'Order lookups are working.', 'matrixweave-for-woocommerce' )
 						);
 						?>
 					</p>

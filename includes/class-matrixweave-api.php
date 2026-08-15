@@ -215,7 +215,12 @@ class Matrixweave_API {
 		$response = wp_remote_get(
 			$this->api_url . $path,
 			array(
-				'timeout'     => 10,
+				// erp-status probes the merchant's OWN store server-side, which
+				// is not something Matrixweave can make fast — a real store with
+				// 4,491 products took 16.7s. At the old 10s this timed out and
+				// the admin screen rendered no status at all. The API now bounds
+				// its own probe, so this only has to be comfortably larger.
+				'timeout'     => 25,
 				'redirection' => 0,
 				'headers'     => array(
 					'X-Secret-Key' => $this->secret_key,
