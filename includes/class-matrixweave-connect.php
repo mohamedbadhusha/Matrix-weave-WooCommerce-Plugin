@@ -286,6 +286,22 @@ class Matrixweave_Connect {
 			);
 		}
 
+		// Matrixweave reads the catalog by calling this site's REST API from its
+		// own servers. On localhost, a private network or a .test domain it
+		// simply cannot — so say that plainly instead of letting the merchant
+		// read a connection failure as a broken plugin. Bail BEFORE creating a
+		// key: an API key that can never be used is just litter in their store.
+		if ( ! $this->is_publicly_reachable() ) {
+			return array(
+				'success' => false,
+				'message' => sprintf(
+					/* translators: %s: this site's address. */
+					__( 'this site (%s) is not reachable from the internet, so Matrixweave cannot read your catalog from here. The chat widget works already — connect the catalog again once the site is live.', 'matrixweave-for-woocommerce' ),
+					$this->site_url()
+				),
+			);
+		}
+
 		global $wpdb;
 		$consumer_key    = 'ck_' . wc_rand_hash();
 		$consumer_secret = 'cs_' . wc_rand_hash();
@@ -322,6 +338,49 @@ class Matrixweave_Connect {
 			'success' => ! empty( $result['success'] ),
 			'message' => isset( $result['message'] ) ? $result['message'] : '',
 		);
+	}
+
+	/**
+	 * Could a server on the public internet actually reach this site?
+	 *
+	 * Deliberately conservative: it only rules out addresses that provably
+	 * cannot be reached — loopback, the private IPv4 ranges, and the hostnames
+	 * local development conventionally uses. Anything else is assumed public,
+	 * because a false "you are not reachable" on a live store would be far
+	 * worse than letting the real connection attempt fail with its own message.
+	 *
+	 * @return bool
+	 */
+	public function is_publicly_reachable() {
+		$host = wp_parse_url( $this->site_url(), PHP_URL_HOST );
+		if ( ! is_string( $host ) || '' === $host ) {
+			return false;
+		}
+		$host = strtolower( $host );
+
+		if ( in_array( $host, array( 'localhost', '127.0.0.1', '::1', '[::1]' ), true ) ) {
+			return false;
+		}
+
+		// Hostnames reserved for local development and testing (RFC 6761/8375).
+		foreach ( array( '.local', '.localhost', '.test', '.example', '.invalid', '.internal', '.home.arpa' ) as $suffix ) {
+			if ( substr( $host, -strlen( $suffix ) ) === $suffix ) {
+				return false;
+			}
+		}
+
+		// Private and link-local IPv4. filter_var's own flags say it best.
+		if ( filter_var( $host, FILTER_VALIDATE_IP ) ) {
+			return (bool) filter_var(
+				$host,
+				FILTER_VALIDATE_IP,
+				FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE
+			);
+		}
+
+		// A hostname with no dot at all cannot resolve publicly (e.g. "wordpress"
+		// inside a container network).
+		return false !== strpos( $host, '.' );
 	}
 
 	/**

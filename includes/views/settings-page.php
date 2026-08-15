@@ -162,13 +162,10 @@ if ( $matrixweave_connected ) {
 				<div class="matrixweave-card">
 					<h2><?php esc_html_e( '1. Your Matrixweave keys', 'matrixweave-for-woocommerce' ); ?></h2>
 					<p class="description">
-						<?php esc_html_e( 'Filled in for you when you connect. You only need to touch these if you are moving the site to a different workspace by hand.', 'matrixweave-for-woocommerce' ); ?>
-					</p>
-					<p class="description">
 						<?php
 						printf(
-							/* translators: %s: dashboard settings link */
-							esc_html__( 'Copy these from your Matrixweave dashboard under %s.', 'matrixweave-for-woocommerce' ),
+							/* translators: %s: dashboard settings location. */
+							esc_html__( 'Filled in for you when you connect. Touch these only to move the site to a different workspace by hand — you can find them in your Matrixweave dashboard under %s.', 'matrixweave-for-woocommerce' ),
 							'<strong>' . esc_html__( 'Settings → Chat Widget', 'matrixweave-for-woocommerce' ) . '</strong>'
 						);
 						?>
@@ -291,8 +288,21 @@ if ( $matrixweave_connected ) {
 
 		<div class="matrixweave-side">
 			<div class="matrixweave-card matrixweave-connect">
-				<h2><?php esc_html_e( 'Connect your catalog', 'matrixweave-for-woocommerce' ); ?></h2>
-				<p class="description"><?php esc_html_e( 'Generate a read-only WooCommerce API key, then paste it into Matrixweave → ERP Connections → Add Source → WooCommerce. No digging through WooCommerce settings.', 'matrixweave-for-woocommerce' ); ?></p>
+				<h2><?php esc_html_e( 'Connect your catalog by hand', 'matrixweave-for-woocommerce' ); ?></h2>
+				<p class="description">
+					<?php esc_html_e( 'Connecting above already does this for you. Use this only if you need to do it manually — generate a key here, then paste it into Matrixweave → Data Sources → Add Source → WooCommerce.', 'matrixweave-for-woocommerce' ); ?>
+				</p>
+				<?php if ( ! $matrixweave_connect->is_publicly_reachable() ) : ?>
+					<p class="description">
+						<?php
+						printf(
+							/* translators: %s: this site's address. */
+							esc_html__( 'Note: %s is not reachable from the internet, so Matrixweave cannot read your catalog from this site however the key is created. The chat widget still works.', 'matrixweave-for-woocommerce' ),
+							'<code>' . esc_html( $matrixweave_connect->site_url() ) . '</code>'
+						);
+						?>
+					</p>
+				<?php endif; ?>
 
 				<label class="matrixweave-switch matrixweave-write-toggle">
 					<input type="checkbox" id="matrixweave-key-write" value="1" <?php checked( $matrixweave_settings->is_key_write_enabled() ); ?> />
