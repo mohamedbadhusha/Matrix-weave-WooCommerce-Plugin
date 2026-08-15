@@ -46,6 +46,13 @@ final class Matrixweave {
 	public $connection;
 
 	/**
+	 * One-click connect handshake.
+	 *
+	 * @var Matrixweave_Connect
+	 */
+	public $connect;
+
+	/**
 	 * Get the singleton instance.
 	 *
 	 * @return Matrixweave
@@ -65,13 +72,16 @@ final class Matrixweave {
 		// no manual load_plugin_textdomain() needed for a wordpress.org plugin.
 		$this->settings   = new Matrixweave_Settings();
 		$this->connection = new Matrixweave_Connection();
+		$this->connect    = new Matrixweave_Connect( $this->settings );
 		$this->widget     = new Matrixweave_Widget( $this->settings );
 
 		$this->settings->hooks();
 		$this->connection->hooks();
+		$this->connect->hooks();
 		$this->widget->hooks();
 
 		add_action( 'admin_notices', array( $this, 'maybe_woocommerce_notice' ) );
+		add_action( 'admin_notices', array( $this, 'maybe_connect_notice' ) );
 		add_filter( 'plugin_action_links_' . MATRIXWEAVE_BASENAME, array( $this, 'action_links' ) );
 	}
 
@@ -90,6 +100,34 @@ final class Matrixweave {
 		echo '<div class="notice notice-warning"><p>';
 		echo esc_html__( 'Matrixweave: WooCommerce is not active. The chat widget will still load, but personalized order lookups need WooCommerce.', 'matrixweave-for-woocommerce' );
 		echo '</p></div>';
+	}
+
+	/**
+	 * Show the outcome of a connect / disconnect, which happened on the request
+	 * before this one (both end in a redirect, so the message has to survive it).
+	 *
+	 * @return void
+	 */
+	public function maybe_connect_notice() {
+		$key    = 'matrixweave_notice_' . get_current_user_id();
+		$notice = get_transient( $key );
+		if ( ! is_array( $notice ) || empty( $notice['message'] ) ) {
+			return;
+		}
+		delete_transient( $key );
+
+		$type    = in_array( $notice['type'], array( 'success', 'warning', 'error' ), true ) ? $notice['type'] : 'info';
+		$classes = array(
+			'success' => 'notice-success',
+			'warning' => 'notice-warning',
+			'error'   => 'notice-error',
+			'info'    => 'notice-info',
+		);
+		printf(
+			'<div class="notice %1$s is-dismissible"><p>%2$s</p></div>',
+			esc_attr( $classes[ $type ] ),
+			esc_html( $notice['message'] )
+		);
 	}
 
 	/**

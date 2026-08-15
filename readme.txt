@@ -4,7 +4,7 @@ Tags: ai chatbot, live chat, sales agent, customer support, woocommerce
 Requires at least: 5.8
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.1.4
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -14,15 +14,15 @@ AI chatbot and live chat for any WordPress site — and on WooCommerce, a sales 
 
 **Matrixweave** adds an AI chatbot to your site in a few clicks. It greets visitors, answers questions about what you sell, and hands the conversation to your team when a human is needed.
 
-It works on **any WordPress site** — a services business, a clinic, a trading company. Install it, paste your Public key, and the chat is live on the front end with no theme edits and no snippet to copy.
+It works on **any WordPress site** — a services business, a clinic, a trading company. Install it, press **Connect Matrixweave**, and the chat is live on the front end with no theme edits and no snippet to copy.
 
 On a **WooCommerce store** it becomes a sales and support agent. It solves the one thing that used to require editing `wp-config.php` and `functions.php`: letting the AI answer **"where's my order?"** for a signed-in customer — safely.
 
 = What it does =
 
-* **One-line install** — paste your Public key, and the chat widget loads on your storefront automatically. No snippet, no theme edits.
+* **One-click setup** — press Connect, sign in, and you are sent straight back with everything wired up. No keys to copy, no snippet, no theme edits.
 * **Secure order lookups** — when a customer is logged in, the plugin signs their identity **on your server** (HMAC, keyed by your Secret key) and hands the proof to the widget. The AI can then look up **that customer's** orders — and only theirs. Your Secret key never reaches the browser.
-* **One-click catalog connection** — generate a read-only WooCommerce REST API key from the plugin, then paste it into Matrixweave. No hunting through WooCommerce settings.
+* **Automatic catalog connection** — connecting also creates a read-only WooCommerce REST API key and hands it over for you, so your products and orders sync with nothing to paste.
 * **Connection tester** — verify your Secret key and API endpoint from the WordPress admin.
 * **Appearance & behaviour** — set the agent mode, accent color and greeting, or defer to your dashboard settings.
 * **Wishlist-aware replies** — when the YITH WooCommerce Wishlist plugin is active, a verified signed-in customer's saved product names are passed along so the agent can reference them. See the third-party service notice below for exactly what is sent.
@@ -43,9 +43,10 @@ This plugin is a connector to **Matrixweave**, a third-party AI service that pow
 * Messages that visitors type in the chat are sent to the Matrixweave API (`https://api.matrixweave.com`) to generate the AI's replies.
 * For a signed-in customer, the plugin sends that customer's email address to the Matrixweave API (server-to-server, keyed by your Secret key) to obtain a signed proof, so the AI can look up that customer's own orders.
 * Alongside that signed proof, the widget also passes the signed-in customer's **display name** (so the agent can greet them by name) and — only if the YITH WooCommerce Wishlist plugin is active — the **product names on their wishlist** (newest 10) to the Matrixweave API, so the agent can reference items they saved. Both are sent only for logged-in customers, only when "Personalized order lookups" is enabled, and never for guests.
-* If you connect your catalog, you generate a WooCommerce REST API key from the plugin and paste it into Matrixweave; Matrixweave then reads your products and orders through the standard WooCommerce REST API to answer product and order questions.
+* If you connect your catalog, the plugin generates a **read-only** WooCommerce REST API key on your own site and sends it to the Matrixweave API; Matrixweave then reads your products and orders through the standard WooCommerce REST API to answer product and order questions. The key is read-only and cannot change anything on your store.
+* When you press **Connect Matrixweave**, the plugin sends you to `https://www.matrixweave.com/connect` with your site's address and a random one-time value, so the account you sign in to there can be linked back to this site. Nothing is sent until you press that button — activating the plugin contacts nothing.
 
-By installing the plugin and entering your keys you consent to this. Please review Matrixweave's terms and privacy policy:
+By installing the plugin and connecting your account you consent to this. Please review Matrixweave's terms and privacy policy:
 
 * Service: [https://www.matrixweave.com](https://www.matrixweave.com)
 * Terms of Service: [https://www.matrixweave.com/terms](https://www.matrixweave.com/terms)
@@ -56,9 +57,11 @@ By installing the plugin and entering your keys you consent to this. Please revi
 1. Upload the plugin to `/wp-content/plugins/` (or install the ZIP via **Plugins → Add New → Upload**).
 2. Activate it through the **Plugins** screen.
 3. Go to **Matrixweave** in the admin menu.
-4. Paste your **Public key** (`pk_...`) and, for order lookups, your **Secret key** (`sk_...`) from your Matrixweave dashboard (**Settings → Chat Widget**).
-5. (Optional) Click **Generate WooCommerce API key** and paste the values into Matrixweave → **ERP Connections → Add Source → WooCommerce** to connect your catalog.
-6. Save. Open your store — the chat is live.
+4. Click **Connect Matrixweave**. Sign in, or create a free account, and you are sent straight back — your keys, the chat widget and your product and order sync are all set up for you.
+
+That is the whole setup. There is nothing to copy and paste.
+
+If you would rather do it by hand — moving a site between workspaces, or a host that blocks the round trip — you can still paste your **Public key** (`pk_...`) and **Secret key** (`sk_...`) into the keys section, and use **Generate WooCommerce API key** to connect your catalog manually.
 
 == Frequently Asked Questions ==
 
@@ -79,11 +82,18 @@ Yes. On a plain WordPress site — a services, trading or membership business �
 
 == Screenshots ==
 
-1. Paste your Public and Secret keys and the plugin is live — the status pills confirm the widget key, order lookups and WooCommerce are all ready.
+1. One button connects the store — the panel then reports how many products synced and whether order lookups really work.
 2. Everything on one screen: agent mode, accent color and greeting, plus one-click generation of a WooCommerce REST API key to connect your catalog.
 3. The chat agent on your storefront. Signed-in customers can ask "where's my order?" and get an answer for their own orders only.
 
 == Changelog ==
+
+= 1.2.0 =
+* **One-click setup.** A new **Connect Matrixweave** button replaces the whole manual flow: sign in (or create a free account), and you are sent straight back with your keys stored, the chat widget live, and your products and orders syncing. Nothing to copy, nothing to paste.
+* The settings screen now reports what Matrixweave can actually see of your store — how many products have synced, and whether order lookups really work — instead of a stored "connected" flag that stayed green through revoked credentials or an empty catalog.
+* Your plan and this month's AI chat usage are shown in wp-admin, so you no longer have to open the dashboard to check whether you are near your limit.
+* The catalog key the plugin creates is now always **read-only**. Nothing in this product writes to your store, so nothing needs permission to.
+* Manual key entry is still there for moving a site between workspaces, or hosts that block the round trip.
 
 = 1.1.4 =
 * Renamed to "AI Chatbot, Live Chat & Sales Agent – Matrixweave". The plugin works on any WordPress site, not only WooCommerce stores, and the old name hid that.

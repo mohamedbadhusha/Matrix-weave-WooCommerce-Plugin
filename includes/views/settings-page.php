@@ -17,6 +17,20 @@ $matrixweave_public_key       = $matrixweave_settings->get_public_key();
 $matrixweave_order_lookup_on  = $matrixweave_settings->is_order_lookup_enabled();
 $matrixweave_embed_on         = $matrixweave_settings->is_embed_enabled();
 $matrixweave_wc_active        = class_exists( 'WooCommerce' );
+
+$matrixweave_connect   = matrixweave()->connect;
+$matrixweave_connected = $matrixweave_connect->is_connected();
+
+// Live state, asked rather than assumed — a stored "connected" flag stays green
+// through revoked credentials, a failed sync and an empty catalog. Only fetched
+// once connected, so an unconfigured site makes no outbound call at all.
+$matrixweave_status  = null;
+$matrixweave_account = null;
+if ( $matrixweave_connected ) {
+	$matrixweave_api     = new Matrixweave_API( $matrixweave_settings->get_api_url(), $matrixweave_settings->get_secret_key() );
+	$matrixweave_status  = $matrixweave_api->erp_status();
+	$matrixweave_account = $matrixweave_api->account_status();
+}
 ?>
 <div class="wrap matrixweave-wrap">
 	<div class="matrixweave-header">
@@ -41,6 +55,105 @@ $matrixweave_wc_active        = class_exists( 'WooCommerce' );
 		</span>
 	</div>
 
+	<?php if ( ! $matrixweave_connected ) : ?>
+		<?php /* The whole setup, in one button. No keys to find, nothing to paste. */ ?>
+		<div class="matrixweave-card">
+			<h2><?php esc_html_e( 'Connect your store', 'matrixweave-for-woocommerce' ); ?></h2>
+			<p><?php esc_html_e( 'One click sets everything up — your workspace, the chat widget, and your product and order sync. No keys to copy.', 'matrixweave-for-woocommerce' ); ?></p>
+			<p class="description">
+				<?php esc_html_e( 'You’ll sign in (or create a free account) on matrixweave.com and come straight back here. The free plan includes 100 AI chats a month, with no card required.', 'matrixweave-for-woocommerce' ); ?>
+			</p>
+			<p>
+				<a href="<?php echo esc_url( $matrixweave_connect->start_url() ); ?>" class="button button-primary button-hero">
+					<?php esc_html_e( 'Connect Matrixweave', 'matrixweave-for-woocommerce' ); ?>
+				</a>
+			</p>
+			<p class="description">
+				<?php
+				printf(
+					/* translators: %s: this site's address. */
+					esc_html__( 'Connecting tells Matrixweave your site address (%s) so it can read your catalog. Nothing is sent until you press the button.', 'matrixweave-for-woocommerce' ),
+					'<code>' . esc_html( $matrixweave_connect->site_url() ) . '</code>'
+				);
+				?>
+			</p>
+		</div>
+	<?php else : ?>
+		<div class="matrixweave-card">
+			<h2><?php esc_html_e( 'Your workspace', 'matrixweave-for-woocommerce' ); ?></h2>
+			<?php if ( is_array( $matrixweave_account ) ) : ?>
+				<p>
+					<strong><?php echo esc_html( isset( $matrixweave_account['workspaceName'] ) ? $matrixweave_account['workspaceName'] : '' ); ?></strong>
+					<?php if ( ! empty( $matrixweave_account['plan'] ) ) : ?>
+						— <?php echo esc_html( $matrixweave_account['plan'] ); ?>
+					<?php endif; ?>
+				</p>
+				<?php if ( isset( $matrixweave_account['conversationsUsed'] ) ) : ?>
+					<p class="description">
+						<?php
+						$matrixweave_used     = (int) $matrixweave_account['conversationsUsed'];
+						$matrixweave_included = isset( $matrixweave_account['conversationsIncluded'] ) ? (int) $matrixweave_account['conversationsIncluded'] : 0;
+						echo esc_html(
+							$matrixweave_included > 0
+								/* translators: 1: chats used, 2: chats included in the plan. */
+								? sprintf( __( '%1$d of %2$d AI chats used this month.', 'matrixweave-for-woocommerce' ), $matrixweave_used, $matrixweave_included )
+								/* translators: %d: chats used. */
+								: sprintf( __( '%d AI chats this month.', 'matrixweave-for-woocommerce' ), $matrixweave_used )
+						);
+						?>
+					</p>
+				<?php endif; ?>
+			<?php else : ?>
+				<p class="description"><?php esc_html_e( 'Connected. (Couldn’t reach Matrixweave for plan details just now.)', 'matrixweave-for-woocommerce' ); ?></p>
+			<?php endif; ?>
+
+			<?php
+			// Four honest outcomes, from the live probe — never a bare "connected".
+			if ( is_array( $matrixweave_status ) ) :
+				$matrixweave_products = isset( $matrixweave_status['productCount'] ) ? (int) $matrixweave_status['productCount'] : 0;
+				$matrixweave_readable = ! empty( $matrixweave_status['ordersReadable'] );
+				?>
+				<?php if ( empty( $matrixweave_status['connected'] ) ) : ?>
+					<p class="matrixweave-pill is-off"><?php esc_html_e( 'Catalog not connected', 'matrixweave-for-woocommerce' ); ?></p>
+				<?php elseif ( ! $matrixweave_readable ) : ?>
+					<p class="matrixweave-pill is-off"><?php esc_html_e( 'Connected, but your store isn’t answering — order lookups will fail.', 'matrixweave-for-woocommerce' ); ?></p>
+					<?php if ( ! empty( $matrixweave_status['syncError'] ) ) : ?>
+						<p class="description"><?php echo esc_html( $matrixweave_status['syncError'] ); ?></p>
+					<?php endif; ?>
+				<?php elseif ( 0 === $matrixweave_products ) : ?>
+					<p class="matrixweave-pill is-off"><?php esc_html_e( 'Connected, but no products have synced yet.', 'matrixweave-for-woocommerce' ); ?></p>
+				<?php else : ?>
+					<p class="matrixweave-pill is-on">
+						<?php
+						echo esc_html(
+							sprintf(
+								/* translators: %d: number of products synced. */
+								_n( '%d product synced, and order lookups are working.', '%d products synced, and order lookups are working.', $matrixweave_products, 'matrixweave-for-woocommerce' ),
+								$matrixweave_products
+							)
+						);
+						?>
+					</p>
+				<?php endif; ?>
+			<?php endif; ?>
+
+			<p>
+				<a href="<?php echo esc_url( $matrixweave_connect->dashboard_url() . '/billing' ); ?>" class="button" target="_blank" rel="noopener noreferrer">
+					<?php esc_html_e( 'Manage plan', 'matrixweave-for-woocommerce' ); ?>
+				</a>
+				<a href="<?php echo esc_url( $matrixweave_connect->dashboard_url() . '/conversations' ); ?>" class="button" target="_blank" rel="noopener noreferrer">
+					<?php esc_html_e( 'Open dashboard', 'matrixweave-for-woocommerce' ); ?>
+				</a>
+				<a href="<?php echo esc_url( $matrixweave_connect->start_url() ); ?>" class="button">
+					<?php esc_html_e( 'Reconnect', 'matrixweave-for-woocommerce' ); ?>
+				</a>
+				<a href="<?php echo esc_url( $matrixweave_connect->disconnect_url() ); ?>" class="button button-link-delete">
+					<?php esc_html_e( 'Disconnect', 'matrixweave-for-woocommerce' ); ?>
+				</a>
+			</p>
+		</div>
+	<?php endif; ?>
+
 	<div class="matrixweave-grid">
 		<div class="matrixweave-main">
 			<form method="post" action="options.php">
@@ -48,6 +161,9 @@ $matrixweave_wc_active        = class_exists( 'WooCommerce' );
 
 				<div class="matrixweave-card">
 					<h2><?php esc_html_e( '1. Your Matrixweave keys', 'matrixweave-for-woocommerce' ); ?></h2>
+					<p class="description">
+						<?php esc_html_e( 'Filled in for you when you connect. You only need to touch these if you are moving the site to a different workspace by hand.', 'matrixweave-for-woocommerce' ); ?>
+					</p>
 					<p class="description">
 						<?php
 						printf(
