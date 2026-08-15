@@ -120,7 +120,18 @@ class Matrixweave_Connect {
 		// above, which never leaves this server — but without this, a CSRF'd
 		// admin visit to ?mw_code=anything would still *consume* the pending
 		// handshake and make the merchant start over.
-		$return = wp_nonce_url( $this->settings_url(), 'matrixweave_finish' );
+		//
+		// NOT wp_nonce_url(): that escapes the separator to `&amp;` because it
+		// is built for printing into HTML. Here the URL travels as DATA — the
+		// dashboard hands it back to the browser — so the escaped form returns
+		// a parameter literally named `amp;_wpnonce`, check_admin_referer fails,
+		// and the connect flow breaks every single time. Verified against a real
+		// WordPress before this line looked like this.
+		$return = add_query_arg(
+			'_wpnonce',
+			wp_create_nonce( 'matrixweave_finish' ),
+			$this->settings_url()
+		);
 
 		// add_query_arg does not encode: WordPress documents that the caller
 		// must pass values already encoded. These are whole URLs, so they must.
