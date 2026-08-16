@@ -82,9 +82,11 @@ Yes. On a plain WordPress site — a services, trading or membership business �
 
 == Screenshots ==
 
-1. One button connects the store — the panel then reports how many products synced and whether order lookups really work.
-2. Everything on one screen: agent mode, accent color and greeting, plus one-click generation of a WooCommerce REST API key to connect your catalog.
-3. The chat agent on your storefront. Signed-in customers can ask "where's my order?" and get an answer for their own orders only.
+1. One button. Connect Matrixweave signs you in (or creates a free account), stores your keys, embeds the chat and starts syncing your products — nothing to copy or paste.
+2. Once connected, the screen reports what Matrixweave can actually see of your store: your plan and chats used this month, how many products have synced, and whether order lookups really work.
+3. Your keys are filled in for you. The manual path stays available for moving a site between workspaces, or for a host that blocks the round trip.
+4. Behaviour on one screen — embed the widget, personalized order lookups, agent mode, accent color and greeting.
+5. The chat agent on your storefront. Signed-in customers can ask "where's my order?" and get an answer for their own orders only.
 
 == Changelog ==
 
