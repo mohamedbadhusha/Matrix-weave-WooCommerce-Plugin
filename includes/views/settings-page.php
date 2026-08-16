@@ -129,7 +129,29 @@ if ( $matrixweave_connected ) {
 						<p class="description"><?php echo esc_html( $matrixweave_status['syncError'] ); ?></p>
 					<?php endif; ?>
 				<?php elseif ( 0 === $matrixweave_products ) : ?>
-					<p class="matrixweave-pill is-off"><?php esc_html_e( 'Connected, but no products have synced yet.', 'matrixweave-for-woocommerce' ); ?></p>
+					<?php
+					// A sync that is still running and a sync that died look
+					// identical from a product count of zero, so say which.
+					$matrixweave_sync = isset( $matrixweave_status['syncStatus'] ) ? (string) $matrixweave_status['syncStatus'] : '';
+					?>
+					<?php if ( 'SYNCING' === $matrixweave_sync ) : ?>
+						<p class="matrixweave-pill is-off"><?php esc_html_e( 'Connected — your catalog is syncing now. Reload in a minute.', 'matrixweave-for-woocommerce' ); ?></p>
+					<?php else : ?>
+						<p class="matrixweave-pill is-off"><?php esc_html_e( 'Connected, but no products have synced yet.', 'matrixweave-for-woocommerce' ); ?></p>
+					<?php endif; ?>
+					<?php if ( ! empty( $matrixweave_status['syncError'] ) ) : ?>
+						<?php
+						// ⚠️ Print the reason. This branch used to swallow it, and
+						// that silence cost a merchant most of a day: the platform
+						// knew exactly why the catalog was empty ("timeout of
+						// 20000ms exceeded") and reported it in `syncError`, the
+						// Matrixweave dashboard displayed it, and this screen — the
+						// one they were actually looking at — said only "no products
+						// have synced yet". An empty catalog with no cause reads as
+						// a broken plugin.
+						?>
+						<p class="description"><?php echo esc_html( $matrixweave_status['syncError'] ); ?></p>
+					<?php endif; ?>
 				<?php else : ?>
 					<p class="matrixweave-pill is-on">
 						<?php

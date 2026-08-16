@@ -330,14 +330,51 @@ class Matrixweave_Connect {
 				'message' => __( 'WooCommerce would not create an API key on this site.', 'matrixweave-for-woocommerce' ),
 			);
 		}
+		$key_id = (int) $wpdb->insert_id;
 
 		$api    = new Matrixweave_API( $this->settings->get_api_url(), $secret_key );
 		$result = $api->provision_store( $this->site_url(), $consumer_key, $consumer_secret );
+
+		if ( ! empty( $result['success'] ) ) {
+			// The new key is proven, so every earlier one of ours is dead weight.
+			$this->prune_old_keys( $key_id );
+		}
 
 		return array(
 			'success' => ! empty( $result['success'] ),
 			'message' => isset( $result['message'] ) ? $result['message'] : '',
 		);
+	}
+
+	/**
+	 * Delete the API keys this plugin minted before the one that just worked.
+	 *
+	 * A key is created BEFORE Matrixweave is asked to accept it, because the
+	 * request has to carry one — so every failed attempt leaves a live
+	 * read-only credential behind in the store. A merchant retrying a connection
+	 * that kept failing accumulated one per click (a real store collected
+	 * several in an afternoon), and they are indistinguishable from each other
+	 * in WooCommerce → Settings → Advanced → REST API.
+	 *
+	 * Pruned on SUCCESS only, deliberately. A failed attempt keeps everything:
+	 * the platform now saves a connection whose test merely timed out, so a
+	 * "failure" here does not prove the key is unused, and deleting it could
+	 * break a connection that was in fact accepted.
+	 *
+	 * @param int $keep_key_id Row id of the key to keep.
+	 * @return void
+	 */
+	private function prune_old_keys( $keep_key_id ) {
+		global $wpdb;
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery
+		$wpdb->query(
+			$wpdb->prepare(
+				"DELETE FROM {$wpdb->prefix}woocommerce_api_keys WHERE description = %s AND key_id != %d",
+				'Matrixweave AI Agent',
+				(int) $keep_key_id
+			)
+		);
+		// phpcs:enable
 	}
 
 	/**

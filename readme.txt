@@ -93,6 +93,8 @@ Yes. On a plain WordPress site — a services, trading or membership business �
 * The settings screen now reports what Matrixweave can actually see of your store — how many products have synced, and whether order lookups really work — instead of a stored "connected" flag that stayed green through revoked credentials or an empty catalog.
 * Your plan and this month's AI chat usage are shown in wp-admin, so you no longer have to open the dashboard to check whether you are near your limit.
 * The catalog key the plugin creates is now always **read-only**. Nothing in this product writes to your store, so nothing needs permission to.
+* When your catalog is empty, this screen now tells you **why**. It knew the reason all along and showed only "no products have synced yet", which reads as a broken plugin when it is usually a store that answered too slowly. It also distinguishes a sync still running from one that stopped.
+* Connecting no longer leaves spare API keys behind. A key has to be created before Matrixweave can be asked to accept it, so every failed attempt left a live read-only key in WooCommerce → Settings → Advanced → REST API. Once a connection succeeds, the earlier ones are removed.
 * Manual key entry is still there for moving a site between workspaces, or hosts that block the round trip.
 
 = 1.1.4 =
